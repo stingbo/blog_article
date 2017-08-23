@@ -40,26 +40,26 @@
 
         最后，安装驱动。显卡驱动安装必须在Linux文本模式，所以：
 
-            第一步，`Ctrl+Alt+F1`切换到`tty1`，使用命令`sudo service lightdm stop`关闭 `X-Window`.
+        第一步，`Ctrl+Alt+F1`切换到`tty1`，使用命令`sudo service lightdm stop`关闭 `X-Window`.
 
-            第二步，给下载的驱动增加执行权限，然后运行(*注：请先看完以下内容在运行*).
-            ```
-            chmod +x NVIDIA-Linux-x86_64-367.35.run
-            sudo ./NVIDIA-Linux-x86_64-367.35.run
-            ```
+        第二步，给下载的驱动增加执行权限，然后运行(*注：请先看完以下内容在运行*).
+        ```
+        chmod +x NVIDIA-Linux-x86_64-367.35.run
+        sudo ./NVIDIA-Linux-x86_64-367.35.run
+        ```
 
-            第三步，安装完成后，重新启动`X-Window`：`sudo service lightdm start`，然后`Ctrl+Alt+F7`进入图形界面；
+        第三步，安装完成后，重新启动`X-Window`：`sudo service lightdm start`，然后`Ctrl+Alt+F7`进入图形界面；
 
-            我在安装完成后遇到一个坑，在图形模式下，登录界面输入密码后依然跳转回登陆界面，无限循环。经过搜索，用以下方法重新安装解决:
-            ```
-            sudo ./NVIDIA.run -no-x-check -no-nouveau-check -no-opengl-files
-            -no-x-check：安装驱动时关闭X服务
-            -no-nouveau-check：安装驱动时禁用nouveau
-            -no-opengl-files：只安装驱动文件，不安装OpenGL文件
-            ```
-            这样再reboot，就不会出现循环登录的问题。
+        我在安装完成后遇到一个坑，在图形模式下，登录界面输入密码后依然跳转回登陆界面，无限循环。经过搜索，用以下方法重新安装解决:
+        ```
+        sudo ./NVIDIA.run -no-x-check -no-nouveau-check -no-opengl-files
+        -no-x-check：安装驱动时关闭X服务
+        -no-nouveau-check：安装驱动时禁用nouveau
+        -no-opengl-files：只安装驱动文件，不安装OpenGL文件
+        ```
+        这样再reboot，就不会出现循环登录的问题。
 
-            如果没有解决请参考[这篇blog](http://blog.csdn.net/chaihuimin/article/details/71006654?locationNum=2&fps=1).
+        如果没有解决请参考[这篇blog](http://blog.csdn.net/chaihuimin/article/details/71006654?locationNum=2&fps=1).
 
 	3. 寻找矿池挖矿。
 		* [火池](http://etp.huopool.com/)
