@@ -39,6 +39,7 @@
         > `linux-headers-amd64` 这个包好像已经废弃了，不过不影响后续安装。
 
         最后，安装驱动。显卡驱动安装必须在Linux文本模式，所以：
+
             第一步，`Ctrl+Alt+F1`切换到`tty1`，使用命令`sudo service lightdm stop`关闭 `X-Window`.
 
             第二步，给下载的驱动增加执行权限，然后运行(*注：请先看完以下内容在运行*).
