@@ -62,10 +62,19 @@
         如果没有解决请参考[这篇blog](http://blog.csdn.net/chaihuimin/article/details/71006654?locationNum=2&fps=1).
 
 	3. 寻找矿池挖矿。
+    
 		* [火池](http://etp.huopool.com/)
+        
 		> 我使用的是火池，挖矿命令：`ethminer -F http://get.etp.huopool.com:8888/MEEihkdp6w7JKVA6hyKVGU9FomAV4G7jYP -G --farm-recheck 200`
 
-        由于我用的是个人电脑，所以算力很低:)，仅为了试验一下而已，下面是挖矿和矿池收益截图：
+        由于我用的是个人电脑，所以算力很低 :) ，仅为了试验一下而已，下面是挖矿和矿池收益截图：
         ![挖矿图](http://blog.blianb.com/wp-content/uploads/2017/08/miner.png)
         ![收益图](http://blog.blianb.com/wp-content/uploads/2017/08/huopool-1.png)
+        
         * [双优](http://uupool.cn/)
+
+###### 总结
+
+* 以上内容如果对你有帮助且你还有闲余的ETP的话，可以对我进行打赏
+	我的ETP地址：`MEEihkdp6w7JKVA6hyKVGU9FomAV4G7jYP`
+	我的博客地址：http://blog.blianb.com
