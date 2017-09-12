@@ -36,7 +36,10 @@
 
     3. 先处理单个文件试验一下：`tesseract xx.png output -l chi_sim`，参数：`-l(L字母小写,language首字母) chi_sim`是需要识别的语言包，成功后，当前目录下就会多一个output.txt文件，里面内容就是图片上的文字，但要注意，如果图片质量不好，那么识别出来的内容会很偏差。
 
-    4. 批量处理命令`for i in `ls *.png | awk -F '.' '{print $1}'`;do tesseract $i.png $i -l chi_sim;done`.
+    4. 批量处理命令:
+    ```
+    for i in `ls *.png | awk -F '.' '{print $1}'`;do tesseract $i.png $i -l chi_sim;done
+    ```
 
 ##### ps:如果你有更好的方法，可以微信或邮件告知哟！
 
