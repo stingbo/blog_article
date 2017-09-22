@@ -8,10 +8,11 @@
 一. 学习Python，使用Python爬虫框架Scrapy爬取测试数据，之前准备爬取微博数据，学艺不精，爬取了豆瓣书籍目录下的一些信息。
 1. 学习Python，感谢廖雪峰老师关于Python教程所作的贡献，[教程地址](https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/001431608990315a01b575e2ab041168ff0df194698afac000)。
 2. 感谢[Scrapy文档](https://doc.scrapy.org/en/latest/index.html)，感叹:只要有一颗学习的心，知识真是唾手可得。
-3. 感谢不知名网友，通过他的示例，完成了自己的需求，我自己爬取豆瓣书籍信息的[项目地址](https://github.com/stingbo/lang_python/tree/master/douban)。
+3. 感谢不知名网友，通过他的示例，完成了自己的需求，我自己爬取豆瓣书籍信息的[项目地址](https://github.com/stingbo/scrapy_douban_book)。
 
 ***
 二. 爬取数据时，是保存在文件里的，用PHP把数据导入MySQL。
+1. 把抓取到的书籍信息文件items.json放入第四步的demo里，然后使用demo里的PHP脚本导入MySQL.
 
 ***
 三. 安装Elasticsearch，用PHP把数据从MySQL导入Elasticsearch。
@@ -21,7 +22,6 @@
 
 ***
 四. 完成demo。
-
 1. [项目地址](https://github.com/stingbo/elasticsearch_example)
 2. 图示
 ![elasticsearch搜索显示示例图片](http://blog.blianb.com/wp-content/uploads/2017/09/elasticsearch_demo.png)
