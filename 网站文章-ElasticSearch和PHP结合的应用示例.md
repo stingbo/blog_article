@@ -39,7 +39,7 @@
 
 -------------
 
-> composer.json composer资源文件，此demo所使用的两个PHP库，Eloquent和elasticesearch-php库。Eloquent是Laravel里使用的数据库ORM，方便好用，能独立于Laravel使用。elasticsearch是PHP调用Elasticsearch服务的库。clone此项目后，使用命令：`composer update -vvv`安装依赖。
+> composer.json composer资源文件，此demo所使用的两个PHP库，Eloquent和elasticsearch-php库。Eloquent是Laravel里使用的数据库ORM，方便好用，能独立于Laravel使用。elasticsearch是PHP调用Elasticsearch服务的库。clone此项目后，使用命令：`composer update -vvv`安装依赖。
 
 -------------
 
