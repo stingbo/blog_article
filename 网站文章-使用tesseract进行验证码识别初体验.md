@@ -13,8 +13,11 @@
 
 ###### 怎么使用
     我是在Python脚本里使用，先安装相关库，在Debian / Ubuntu上：
+
 `sudo apt install tesseract-ocr libtesseract-dev libleptonica-dev`
+
 `sudo pip3 install tesseroc`
+
 `sudo pip3 install pillow`
 
     pillow fork自PIL库，PIL是Python Imaging Library的缩写，Python图片处理库。
