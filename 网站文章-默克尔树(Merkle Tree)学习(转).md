@@ -1,12 +1,12 @@
 ##### Merkle Tree概念
-![Merkle Tree](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527163537178-321412097.png)
+![Merkle Tree](http://blog.blianb.com/wp-content/uploads/2018/03/1.png)
 
 > Merkle Tree，通常也被称作Hash Tree，顾名思义，就是存储hash值的一棵树。Merkle树的叶子是数据块(例如，文件或者文件的集合)的hash值。非叶节点是其对应子节点串联字符串的hash。[[1]](#1)
 
 1. Hash
     Hash是一个把任意长度的数据映射成固定长度数据的函数[[2]](#2)。例如，对于数据完整性校验，最简单的方法是对整个数据做Hash运算得到固定长度的Hash值，然后把得到的Hash值公布在网上，这样用户下载到数据之后，对数据再次进行Hash运算，比较运算结果和网上公布的Hash值进行比较，如果两个Hash值相等，说明下载的数据没有损坏。可以这样做是因为输入数据的稍微改变就会引起Hash运算结果的面目全非，而且根据Hash值反推原始输入数据的特征是困难的。[[3]](#3)
 
-    ![hashfunction](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527163705538-1394781481.png)
+    ![hashfunction](http://blog.blianb.com/wp-content/uploads/2018/03/2.png)
 
     如果从一个稳定的服务器进行下载，采用单一Hash是可取的。但如果数据源不稳定，一旦数据损坏，就需要重新下载，这种下载的效率是很低的。
 
@@ -15,7 +15,7 @@
 
     怎么确定小的数据块没有损坏哪？只需要为每个数据块做Hash。BT下载的时候，在下载到真正数据之前，我们会先下载一个Hash列表。那么问题又来了，怎么确定这个Hash列表本事是正确的哪？答案是把每个小块数据的Hash值拼到一起，然后对这个长字符串在作一次Hash运算，这样就得到Hash列表的根Hash(Top Hash or Root Hash)。下载数据的时候，首先从可信的数据源得到正确的根Hash，就可以用它来校验Hash列表了，然后通过校验后的Hash列表校验数据块。
 
-    ![merkle](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527163900397-1043573061.png)
+    ![merkle](http://blog.blianb.com/wp-content/uploads/2018/03/3.png)
 
 3. Merkle Tree
     Merkle Tree可以看做Hash List的泛化（Hash List可以看作一种特殊的Merkle Tree，即树高为2的多叉Merkle Tree）。
@@ -26,7 +26,7 @@
 
     Merkle Tree和Hash List的主要区别是，可以直接下载并立即验证Merkle Tree的一个分支。因为可以将文件切分成小的数据块，这样如果有一块数据损坏，仅仅重新下载这个数据块就行了。如果文件非常大，那么Merkle tree和Hash list都很到，但是Merkle tree可以一次下载一个分支，然后立即验证这个分支，如果分支验证通过，就可以下载数据了。而Hash list只有下载整个hash list才能验证。
 
-    ![merkle](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527163936819-725283544.png)
+    ![merkle](http://blog.blianb.com/wp-content/uploads/2018/03/4.png)
 
 ##### Merkle Tree的特点
 > MT是一种树，大多数是二叉树，也可以多叉树，无论是几叉树，它都具有树结构的所有特点；Merkle Tree的叶子节点的value是数据集合的单元数据或者单元数据HASH。非叶子节点的value是根据它下面所有的叶子节点值，然后按照Hash算法计算而得出的。[[4]](#4)[[5]](#5)
@@ -38,12 +38,11 @@
 ##### Merkle Tree的操作
 
 1. 创建Merckle Tree
+    假如最底层有9个数据块。
 
-    加入最底层有9个数据块。
+    step1：（红色线）对数据块做hash运算，`Node0i = hash(Data0i), i=1,2,…,9`
 
-    step1：（红色线）对数据块做hash运算，Node0i = hash(Data0i), i=1,2,…,9
-
-    step2: （橙色线）相邻两个hash块串联，然后做hash运算，Node1((i+1)/2) = hash(Node0i+Node0(i+1)), i=1,3,5,7;对于i=9, Node1((i+1)/2) = hash(Node0i)
+    step2: （橙色线）相邻两个hash块串联，然后做hash运算，`Node1((i+1)/2) = hash(Node0i+Node0(i+1)), i=1,3,5,7`;对于i=9, `Node1((i+1)/2) = hash(Node0i)`
 
     step3: （黄色线）重复step2
 
@@ -51,14 +50,14 @@
 
     step5：（蓝色线）重复step2，生成Merkle Tree Root
 
-    ![merkle](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527164204428-1614047478.png)
+    ![merkle](http://blog.blianb.com/wp-content/uploads/2018/03/5.png)
 
     易得，创建Merkle Tree是O(n)复杂度(这里指O(n)次hash运算)，n是数据块的大小。得到Merkle Tree的树高是log(n)+1。
 
 2. 检索数据块
     为了更好理解，我们假设有A和B两台机器，A需要与B相同目录下有8个文件，文件分别是f1 f2 f3 ....f8。这个时候我们就可以通过Merkle Tree来进行快速比较。假设我们在文件创建的时候每个机器都构建了一个Merkle Tree。具体如下图:
 
-    ![merkle](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527164248178-1144958521.png)
+    ![merkle](http://blog.blianb.com/wp-content/uploads/2018/03/6.png)
 
     从上图可得知，叶子节点node7的value = hash(f1),是f1文件的HASH;而其父亲节点node3的value = hash(v7, v8)，也就是其子节点node7 node8的值得HASH。就是这样表示一个层级运算关系。root节点的value其实是所有叶子节点的value的唯一特征。
 
@@ -75,7 +74,7 @@
     Step5. 检索比较完毕。
 
     以上过程的理论复杂度是Log(N)。过程描述图如下:
-    ![merkle](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527164334959-1957978022.png)
+    ![merkle](http://blog.blianb.com/wp-content/uploads/2018/03/7.png)
 
     从上图可以得知真个过程可以很快的找到对应的不相同的文件。
 
@@ -84,11 +83,11 @@
 
     对于Merkle Tree数据块的更新操作其实是很简单的，更新完数据块，然后接着更新其到树根路径上的Hash值就可以了，这样不会改变Merkle Tree的结构。但是，插入和删除操作肯定会改变Merkle Tree的结构，如下图，一种插入操作是这样的：
 
-    ![merkle](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527164540866-1551004387.png)
+    ![merkle](http://blog.blianb.com/wp-content/uploads/2018/03/8.png)
 
     插入数据块0后(考虑数据块的位置)，Merkle Tree的结构是这样的：
 
-    ![merkle](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527164609772-233903093.png)
+    ![merkle](http://blog.blianb.com/wp-content/uploads/2018/03/9.png)
 
     而[[6]](#6)中的同学在考虑一种插入的算法，满足下面条件：
 
@@ -99,7 +98,7 @@
         5. 插入后的Merkle Tree保持平衡
 
     然后上面的插入结果就会变成这样：
-    ![merkle](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527164740491-297832995.png)
+    ![merkle](http://blog.blianb.com/wp-content/uploads/2018/03/10.png)
 
     根据[[6]](#6)中回答者所说，Merkle Tree的插入和删除操作其实是一个工程上的问题，不同问题会有不同的插入方法。如果要确保树是平衡的或者是树高是log(n)的，可以用任何的标准的平衡二叉树的模式，如AVL树，红黑树，伸展树，2-3树等。这些平衡二叉树的更新模式可以在O(lgn)时间内完成插入操作，并且能保证树高是O(lgn)的。那么很容易可以看出更新所有的Merkle Hash可以在O((lgn)2)时间内完成（对于每个节点如要更新从它到树根O(lgn)个节点，而为了满足树高的要求需要更新O(lgn)个节点）。如果仔细分析的话，更新所有的hash实际上可以在O(lgn)时间内完成，因为要改变的所有节点都是相关联的，即他们要不是都在从某个叶节点到树根的一条路径上，或者这种情况相近。
 
@@ -113,14 +112,14 @@
 2. P2P网络
     在P2P网络中，Merkle Tree用来确保从其他节点接受的数据块没有损坏且没有被替换，甚至检查其他节点不会欺骗或者发布虚假的块。大家所熟悉的BT下载就是采用了P2P技术来让客户端之间进行数据传输，一来可以加快数据下载速度，二来减轻下载服务器的负担。BT即BitTorrent，是一种中心索引式的P2P文件分分析通信协议[[7]](#7)。
 
-    要进下载必须从中心索引服务器获取一个扩展名为torrent的索引文件（即大家所说的种子），torrent文件包含了要共享文件的信息，包括文件名，大小，文件的Hash信息和一个指向Tracker的URL[8]。Torrent文件中的Hash信息是每一块要下载的文件内容的加密摘要，这些摘要也可运行在下载的时候进行验证。大的torrent文件是Web服务器的瓶颈，而且也不能直接被包含在RSS或gossiped around(用流言传播协议进行传播)。一个相关的问题是大数据块的使用，因为为了保持torrent文件的非常小，那么数据块Hash的数量也得很小，这就意味着每个数据块相对较大。大数据块影响节点之间进行交易的效率，因为只有当大数据块全部下载下来并校验通过后，才能与其他节点进行交易。
+    要进下载必须从中心索引服务器获取一个扩展名为torrent的索引文件（即大家所说的种子），torrent文件包含了要共享文件的信息，包括文件名，大小，文件的Hash信息和一个指向Tracker的URL[[8]](#8)。Torrent文件中的Hash信息是每一块要下载的文件内容的加密摘要，这些摘要也可运行在下载的时候进行验证。大的torrent文件是Web服务器的瓶颈，而且也不能直接被包含在RSS或gossiped around(用流言传播协议进行传播)。一个相关的问题是大数据块的使用，因为为了保持torrent文件的非常小，那么数据块Hash的数量也得很小，这就意味着每个数据块相对较大。大数据块影响节点之间进行交易的效率，因为只有当大数据块全部下载下来并校验通过后，才能与其他节点进行交易。
 
     就解决上面两个问题是用一个简单的Merkle Tree代替Hash List。设计一个层数足够多的满二叉树，叶节点是数据块的Hash，不足的叶节点用0来代替。上层的节点是其对应孩子节点串联的hash。Hash算法和普通torrent一样采用SHA1。其数据传输过程和第一节中描述的类似。
-	![p2p](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527164948100-1323551447.png)
+	![p2p](http://blog.blianb.com/wp-content/uploads/2018/03/11.png)
 
 3. Trusted Computing
-    可信计算是可信计算组为分布式计算环境中参与节点的计算平台提供端点可信性而提出的。可信计算技术在计算平台的硬件层引入可信平台模块(Trusted Platform，TPM)，实际上为计算平台提供了基于硬件的可信根(Root of trust，RoT)。从可信根出发，使用信任链传递机制，可信计算技术可对本地平台的硬件及软件实施逐层的完整性度量，并将度量结果可靠地保存再TPM的平台配置寄存器(Platform configuration register，PCR)中，此后远程计算平台可通过远程验证机制(Remote Attestation)比对本地PCR中度量结果，从而验证本地计算平台的可信性。可信计算技术让分布式应用的参与节点摆脱了对中心服务器的依赖，而直接通过用户机器上的TPM芯片来建立信任，使得创建扩展性更好、可靠性更高、可用性更强的安全分布式应用成为可能[10]。可信计算技术的核心机制是远程验证(remote attestation),分布式应用的参与结点正是通过远程验证机制来建立互信,从而保障应用的安全。
-    ![Trusted Computing](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527165022756-1215479209.png)
+    可信计算是可信计算组为分布式计算环境中参与节点的计算平台提供端点可信性而提出的。可信计算技术在计算平台的硬件层引入可信平台模块(Trusted Platform，TPM)，实际上为计算平台提供了基于硬件的可信根(Root of trust，RoT)。从可信根出发，使用信任链传递机制，可信计算技术可对本地平台的硬件及软件实施逐层的完整性度量，并将度量结果可靠地保存再TPM的平台配置寄存器(Platform configuration register，PCR)中，此后远程计算平台可通过远程验证机制(Remote Attestation)比对本地PCR中度量结果，从而验证本地计算平台的可信性。可信计算技术让分布式应用的参与节点摆脱了对中心服务器的依赖，而直接通过用户机器上的TPM芯片来建立信任，使得创建扩展性更好、可靠性更高、可用性更强的安全分布式应用成为可能[[10]](#10)。可信计算技术的核心机制是远程验证(remote attestation),分布式应用的参与结点正是通过远程验证机制来建立互信,从而保障应用的安全。
+    ![Trusted Computing](http://blog.blianb.com/wp-content/uploads/2018/03/12.png)
 
     文献[[10]](#10)提出了一种基于Merkle Tree的远程验证机制，其核心是完整性度量值哈希树。
 
@@ -144,28 +143,28 @@
         Hash – Link链接到对象的Hash
         Size – Link链接到对象的累积大小，包括它的Links
 
-	![ipfs](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527165254725-425200618.png)
+	![ipfs](http://blog.blianb.com/wp-content/uploads/2018/03/13.png)
 
     通过Name和Links，IPFS的集合组成了一个Merkle DAG（有向无环图）。
-    ![ipfs-dag](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527165314334-321253475.png)
+    ![ipfs-dag](http://blog.blianb.com/wp-content/uploads/2018/03/14.png)
 
     对于小文件（小于256kB），是一个没有Links的IPFS对象。
-    ![no-links](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527165335522-116819309.png)
+    ![no-links](http://blog.blianb.com/wp-content/uploads/2018/03/15.png)
 
     对于大文件，被表示为一个文件块(小于256kB)的集合。只有拥有最小的Data的对象来代表这个大文件。这个对象的Links的名字都为空字符串。
 
-    ![big-file](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527165357725-656455407.png)
-    ![ipfs](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527165407725-1225343216.png)
+    ![big-file](http://blog.blianb.com/wp-content/uploads/2018/03/16.png)
+    ![ipfs](http://blog.blianb.com/wp-content/uploads/2018/03/17.png)
 
     目录结构：目录是没有数据的IPFS对象，它的链接指向其包含的文件和目录。
-    ![ipfs-dir](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527165432803-1065863465.png)
+    ![ipfs-dir](http://blog.blianb.com/wp-content/uploads/2018/03/18.png)
 
     IPFS可以表示Git使用的数据结构，Git commit object。Commit Object主要的特点是他有一个或多个名为’parent0’和‘parent1’等的链接（这些链接指向前一个版本），以及一个名为object的对象(在Git中成为tree)指向引用这个commit的文件系统结构。
-    ![git-commit](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527165455647-337696972.png)
+    ![git-commit](http://blog.blianb.com/wp-content/uploads/2018/03/19.png)
 
 5. BitCoin和Ethereum[[12]](#12)[[13]](#13)
     Merkle Proof最早的应用是Bitcoin，它是由中本聪在2009年描述并创建的。Bitcoin的Blockchain利用Merkle proofs来存储每个区块的交易。
-    ![merkle-proofs](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527165613991-323413263.png)
+    ![merkle-proofs](http://blog.blianb.com/wp-content/uploads/2018/03/20.png)
 
     而这样做的好处，也就是中本聪描述到的“简化支付验证”（Simplified Payment Verification，SPV）的概念:一个“轻客户端”（light client）可以仅下载链的区块头即每个区块中的80byte的数据块，仅包含五个元素，而不是下载每一笔交易以及每一个区块：
 
@@ -189,7 +188,7 @@
         收据Receipts(本质上是显示每个交易影响的多块数据)
         状态State
 
-    ![eth-head](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527165745163-1727084736.png)
+    ![eth-head](http://blog.blianb.com/wp-content/uploads/2018/03/21.png)
 
     这使得一个非常先进的轻客户端协议成为了可能，它允许轻客户端轻松地进行并核实以下类型的查询答案：
 
@@ -209,7 +208,7 @@
 
     客户端会进行相同的步骤，但会将服务器提供的证明作为一个数据库来使用。如果客户端进行步骤的结果和服务器提供的是一样的话，客户端就接受这个证明。
 
-	![MPT](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527165840209-1558796638.png)
+	![MPT](http://blog.blianb.com/wp-content/uploads/2018/03/22.png)
     __MPT(Merkle Patricia Trees)__
 
     前面我们提到，最为简单的一种Merkle Tree大多数情况下都是一棵二叉树。然而，Ethereum所使用的Merkle Tree则更为复杂，我们称之为“梅克尔.帕特里夏树”（Merkle Patricia tree）。
@@ -217,7 +216,7 @@
     对于验证属于list格式（本质上来讲，它就是一系列前后相连的数据块）的信息而言，二叉Merkle Tree是非常好的数据结构。对于交易树来说，它们也同样是不错的，因为一旦树已经建立，花多少时间来编辑这棵树并不重要，树一旦建立了，它就会永远存在并且不会改变。
 
     但是，对于状态树，情况会更复杂些。以太坊中的状态树基本上包含了一个键值映射，其中的键是地址，而值包括账户的声明、余额、随机数nounce、代码以及每一个账户的存储（其中存储本身就是一颗树）。例如，摩登测试网络（the Morden testnet）的创始状态如下所示：
-    ![the morden testnet](https://images2015.cnblogs.com/blog/834896/201605/834896-20160527165928678-58958503.png)
+    ![the morden testnet](http://blog.blianb.com/wp-content/uploads/2018/03/23.png)
 
     然而，不同于交易历史记录，状态树需要经常地进行更新：账户余额和账户的随机数nonce经常会更变，更重要的是，新的账户会频繁地插入，存储的键（ key）也会经常被插入以及删除。我们需要这样的数据结构，它能在一次插入、更新、删除操作后快速计算到树根，而不需要重新计算整个树的Hash。这种数据结构同样得包括两个非常好的第二特征：
 
@@ -236,28 +235,28 @@
 本文[转载自这里](http://www.cnblogs.com/fengzhiwu/p/5524324.html)，如有侵权请联系删除！
 
 参考:
-<span id="1">[1]  https://en.wikipedia.org/wiki/Merkle_tree</span>
+<span id="1">[1][https://en.wikipedia.org/wiki/Merkle_tree](https://en.wikipedia.org/wiki/Merkle_tree "https://en.wikipedia.org/wiki/Merkle_tree")</span>
 
-<span id="2">[2]  https://en.wikipedia.org/wiki/Hash_function#Hash_function_algorithms</span>
+<span id="2">[2][https://en.wikipedia.org/wiki/Hash_function#Hash_function_algorithms](https://en.wikipedia.org/wiki/Hash_function#Hash_function_algorithms "https://en.wikipedia.org/wiki/Hash_function#Hash_function_algorithms")</span>
 
-<span id="3">[3]  http://www.jianshu.com/p/458e5890662f</span>
+<span id="3">[3][http://www.jianshu.com/p/458e5890662f](http://www.jianshu.com/p/458e5890662f "http://www.jianshu.com/p/458e5890662f")</span>
 
-<span id="4">[4]  http://blog.csdn.net/xtu_xiaoxin/article/details/8148237</span>
+<span id="4">[4][http://blog.csdn.net/xtu_xiaoxin/article/details/8148237](http://blog.csdn.net/xtu_xiaoxin/article/details/8148237 "http://blog.csdn.net/xtu_xiaoxin/article/details/8148237")</span>
 
-<span id="5">[5]  http://blog.csdn.net/yuanrxdu/article/details/22474697?utm_source=tuicool&utm_medium=referral</span>
+<span id="5">[5][http://blog.csdn.net/yuanrxdu/article/details/22474697?utm_source=tuicool&utm_medium=referral](http://blog.csdn.net/yuanrxdu/article/details/22474697?utm_source=tuicool&utm_medium=referral "http://blog.csdn.net/yuanrxdu/article/details/22474697?utm_source=tuicool&utm_medium=referral")</span>
 
-<span id="6">[6]  http://crypto.stackexchange.com/questions/22669/merkle-hash-tree-updates</span>
+<span id="6">[6][http://crypto.stackexchange.com/questions/22669/merkle-hash-tree-updates](http://crypto.stackexchange.com/questions/22669/merkle-hash-tree-updates "http://crypto.stackexchange.com/questions/22669/merkle-hash-tree-updates")</span>
 
-<span id="7">[7]  https://en.wikipedia.org/wiki/BitTorrent</span>
+<span id="7">[7][https://en.wikipedia.org/wiki/BitTorrent](https://en.wikipedia.org/wiki/BitTorrent "https://en.wikipedia.org/wiki/BitTorrent")</span>
 
-<span id="8">[8]  梁成仁, 李健勇, 黄道颖, 等. 基于 Merkle 树的 BT 系统 torrent 文件优化策略[J]. 计算机工程, 2008, 34(3): 85-87.</span>
+<span id="8">[8] 梁成仁, 李健勇, 黄道颖, 等. 基于 Merkle 树的 BT 系统 torrent 文件优化策略[J]. 计算机工程, 2008, 34(3): 85-87.</span>
 
-<span id="9">[9]  http://bittorrent.org/beps/bep_0030.html</span>
+<span id="9">[9][http://bittorrent.org/beps/bep_0030.html](http://bittorrent.org/beps/bep_0030.html "http://bittorrent.org/beps/bep_0030.html")</span>
 
 <span id="10">[10] 徐梓耀, 贺也平, 邓灵莉. 一种保护隐私的高效远程验证机制[J]. Journal of Software, 2011, 22(2).</span>
 
-<span id="11">[11] http://whatdoesthequantsay.com/2015/09/13/ipfs-introduction-by-example/</span>
+<span id="11">[11][http://whatdoesthequantsay.com/2015/09/13/ipfs-introduction-by-example/](http://whatdoesthequantsay.com/2015/09/13/ipfs-introduction-by-example/ "http://whatdoesthequantsay.com/2015/09/13/ipfs-introduction-by-example/")</span>
 
-<span id="12">[12] https://www.weusecoins.com/what-is-a-merkle-tree/</span>
+<span id="12">[12][https://www.weusecoins.com/what-is-a-merkle-tree/](https://www.weusecoins.com/what-is-a-merkle-tree/ "https://www.weusecoins.com/what-is-a-merkle-tree/")</span>
 
-<span id="13">[13] http://www.8btc.com/merkling-in-ethereum</span>
+<span id="13">[13][http://www.8btc.com/merkling-in-ethereum](http://www.8btc.com/merkling-in-ethereum "http://www.8btc.com/merkling-in-ethereum")</span>
