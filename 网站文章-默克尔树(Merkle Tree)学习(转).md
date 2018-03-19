@@ -11,9 +11,11 @@
     如果从一个稳定的服务器进行下载，采用单一Hash是可取的。但如果数据源不稳定，一旦数据损坏，就需要重新下载，这种下载的效率是很低的。
 
 2. Hash List
-    在点对点网络中作数据传输的时候，会同时从多个机器上下载数据，而且很多机器可以认为是不稳定或者不可信的。为了校验数据的完整性，更好的办法是把大的文件分割成小的数据块（例如，把分割成2K为单位的数据块）。这样的好处是，如果小块数据在传输过程中损坏了，那么只要重新下载这一快数据就行了，不用重新下载整个文件。
+    在点对点(p2p)网络中作数据传输的时候，会同时从多个机器上下载数据，而且很多机器可以认为是不稳定或者不可信的。为了校验数据的完整性，更好的办法是把大的文件分割成小的数据块（例如，分割成2K为单位的数据块）。这样的好处是，如果小块数据在传输过程中损坏了，那么只要重新下载这一块数据就行了，不用重新下载整个文件。
 
-    怎么确定小的数据块没有损坏哪？只需要为每个数据块做Hash。BT下载的时候，在下载到真正数据之前，我们会先下载一个Hash列表。那么问题又来了，怎么确定这个Hash列表本事是正确的哪？答案是把每个小块数据的Hash值拼到一起，然后对这个长字符串在作一次Hash运算，这样就得到Hash列表的根Hash(Top Hash or Root Hash)。下载数据的时候，首先从可信的数据源得到正确的根Hash，就可以用它来校验Hash列表了，然后通过校验后的Hash列表校验数据块。
+    怎么确定小的数据块有没有损坏呢？只需要为每个数据块做Hash。BT下载的时候，在下载到真正数据之前，我们会先下载一个Hash列表。那么问题又来了，怎么确定这个Hash列表本身是正确的呢？
+
+    答案是把每个小块数据的Hash值拼到一起，然后对这个长字符串在做一次Hash运算，这样就得到Hash列表的根Hash(Top Hash or Root Hash)。下载数据的时候，首先从可信的数据源得到正确的根Hash，就可以用它来校验Hash列表了，然后通过校验后的Hash列表校验数据块。
 
     ![merkle](http://blog.blianb.com/wp-content/uploads/2018/03/3.png)
 
@@ -22,9 +24,9 @@
 
     在最底层，和哈希列表一样，我们把数据分成小的数据块，有相应地哈希和它对应。但是往上走，并不是直接去运算根哈希，而是把相邻的两个哈希合并成一个字符串，然后运算这个字符串的哈希，这样每两个哈希就结婚生子，得到了一个”子哈希“。如果最底层的哈希总数是单数，那到最后必然出现一个单身哈希，这种情况就直接对它进行哈希运算，所以也能得到它的子哈希。于是往上推，依然是一样的方式，可以得到数目更少的新一级哈希，最终必然形成一棵倒挂的树，到了树根的这个位置，这一代就剩下一个根哈希了，我们把它叫做 Merkle Root[[3]](#3)。
 
-    在p2p网络下载网络之前，先从可信的源获得文件的Merkle Tree树根。一旦获得了树根，就可以从其他从不可信的源获取Merkle tree。通过可信的树根来检查接受到的Merkle Tree。如果Merkle Tree是损坏的或者虚假的，就从其他源获得另一个Merkle Tree，直到获得一个与可信树根匹配的Merkle Tree。
+    在p2p网络下载数据之前，先从可信的源获得文件的Merkle Tree树根。一旦获得了树根，就可以从其他从不可信的源获取Merkle tree。通过可信的树根来检查接收到的Merkle Tree。如果Merkle Tree是损坏的或者虚假的，就从其他源获得另一个Merkle Tree，直到获得一个与可信树根匹配的Merkle Tree。
 
-    Merkle Tree和Hash List的主要区别是，可以直接下载并立即验证Merkle Tree的一个分支。因为可以将文件切分成小的数据块，这样如果有一块数据损坏，仅仅重新下载这个数据块就行了。如果文件非常大，那么Merkle tree和Hash list都很到，但是Merkle tree可以一次下载一个分支，然后立即验证这个分支，如果分支验证通过，就可以下载数据了。而Hash list只有下载整个hash list才能验证。
+    Merkle Tree和Hash List的主要区别是，可以直接下载并立即验证Merkle Tree的一个分支。因为可以将文件切分成小的数据块，这样如果有一块数据损坏，仅仅重新下载这个数据块就行了。如果文件非常大，那么Merkle tree和Hash list都很多，但是Merkle tree可以一次下载一个分支，然后立即验证这个分支，如果分支验证通过，就可以下载数据了。而Hash list只有下载整个hash list才能验证。
 
     ![merkle](http://blog.blianb.com/wp-content/uploads/2018/03/4.png)
 
@@ -110,9 +112,9 @@
     最初Merkle Tree目的是高效的处理Lamport one-time signatures。 每一个Lamport key只能被用来签名一个消息，但是与Merkle tree结合可以来签名多条Merkle。这种方法成为了一种高效的数字签名框架，即Merkle Signature Scheme。
 
 2. P2P网络
-    在P2P网络中，Merkle Tree用来确保从其他节点接受的数据块没有损坏且没有被替换，甚至检查其他节点不会欺骗或者发布虚假的块。大家所熟悉的BT下载就是采用了P2P技术来让客户端之间进行数据传输，一来可以加快数据下载速度，二来减轻下载服务器的负担。BT即BitTorrent，是一种中心索引式的P2P文件分分析通信协议[[7]](#7)。
+    在P2P网络中，Merkle Tree用来确保从其他节点接受的数据块没有损坏且没有被替换，甚至检查其他节点不会欺骗或者发布虚假的块。大家所熟悉的BT下载就是采用了P2P技术来让客户端之间进行数据传输，一来可以加快数据下载速度，二来减轻下载服务器的负担。BT即BitTorrent，用于点对点文件共享（“P2P”）的通信协议，通过Internet分发数据和电子文件[[7]](#7)。
 
-    要进下载必须从中心索引服务器获取一个扩展名为torrent的索引文件（即大家所说的种子），torrent文件包含了要共享文件的信息，包括文件名，大小，文件的Hash信息和一个指向Tracker的URL[[8]](#8)。Torrent文件中的Hash信息是每一块要下载的文件内容的加密摘要，这些摘要也可运行在下载的时候进行验证。大的torrent文件是Web服务器的瓶颈，而且也不能直接被包含在RSS或gossiped around(用流言传播协议进行传播)。一个相关的问题是大数据块的使用，因为为了保持torrent文件的非常小，那么数据块Hash的数量也得很小，这就意味着每个数据块相对较大。大数据块影响节点之间进行交易的效率，因为只有当大数据块全部下载下来并校验通过后，才能与其他节点进行交易。
+    要进下载必须从中心索引服务器获取一个扩展名为torrent的索引文件（即大家所说的种子），torrent文件包含了要共享文件的信息，包括文件名，大小，文件的Hash信息和一个指向Tracker的URL[[8]](#8)。Torrent文件中的Hash信息是每一块要下载的文件内容的加密摘要，这些摘要也可运行在下载的时候进行验证。大的torrent文件是Web服务器的瓶颈，而且也不能直接被包含在RSS或gossiped around(用"流言传播协议"进行传播)[[14]](#14)[[15]](#15)。一个相关的问题是大数据块的使用，因为为了保持torrent文件的非常小，那么数据块Hash的数量也得很小，这就意味着每个数据块相对较大。大数据块影响节点之间进行交易的效率，因为只有当大数据块全部下载下来并校验通过后，才能与其他节点进行交易。
 
     就解决上面两个问题是用一个简单的Merkle Tree代替Hash List。设计一个层数足够多的满二叉树，叶节点是数据块的Hash，不足的叶节点用0来代替。上层的节点是其对应孩子节点串联的hash。Hash算法和普通torrent一样采用SHA1。其数据传输过程和第一节中描述的类似。
 	![p2p](http://blog.blianb.com/wp-content/uploads/2018/03/11.png)
@@ -159,7 +161,7 @@
     目录结构：目录是没有数据的IPFS对象，它的链接指向其包含的文件和目录。
     ![ipfs-dir](http://blog.blianb.com/wp-content/uploads/2018/03/18.png)
 
-    IPFS可以表示Git使用的数据结构，Git commit object。Commit Object主要的特点是他有一个或多个名为’parent0’和‘parent1’等的链接（这些链接指向前一个版本），以及一个名为object的对象(在Git中成为tree)指向引用这个commit的文件系统结构。
+    IPFS可以表示Git使用的数据结构，Git Commit Object。Commit Object主要的特点是他有一个或多个名为’parent0’和‘parent1’等的链接（这些链接指向前一个版本），以及一个名为object的对象(在Git中成为tree)指向引用这个commit的文件系统结构。
     ![git-commit](http://blog.blianb.com/wp-content/uploads/2018/03/19.png)
 
 5. BitCoin和Ethereum[[12]](#12)[[13]](#13)
@@ -232,7 +234,7 @@
 
 *****
 
-本文[转载自这里](http://www.cnblogs.com/fengzhiwu/p/5524324.html)，如有侵权请联系删除！
+原文[出自这里](http://www.cnblogs.com/fengzhiwu/p/5524324.html)，有部分修改，如有侵权请联系删除！
 
 参考:
 <span id="1">[1][https://en.wikipedia.org/wiki/Merkle_tree](https://en.wikipedia.org/wiki/Merkle_tree "https://en.wikipedia.org/wiki/Merkle_tree")</span>
@@ -260,3 +262,7 @@
 <span id="12">[12][https://www.weusecoins.com/what-is-a-merkle-tree/](https://www.weusecoins.com/what-is-a-merkle-tree/ "https://www.weusecoins.com/what-is-a-merkle-tree/")</span>
 
 <span id="13">[13][http://www.8btc.com/merkling-in-ethereum](http://www.8btc.com/merkling-in-ethereum "http://www.8btc.com/merkling-in-ethereum")</span>
+
+<span id="14">[14][https://en.wikipedia.org/wiki/Gossip_protocol](https://en.wikipedia.org/wiki/Gossip_protocol "https://en.wikipedia.org/wiki/Gossip_protocol")</span>
+
+<span id="15">[15][http://blog.csdn.net/cloudresearch/article/details/23127985](http://blog.csdn.net/cloudresearch/article/details/23127985 "http://blog.csdn.net/cloudresearch/article/details/23127985")</span>
