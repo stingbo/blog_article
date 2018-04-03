@@ -50,13 +50,32 @@
 
 ##### 知道block号，查看block对应的具体文件：
 
-1. 查看文件路径
+1. 根据块号查找分区。查看分区情况，`sudo fdisk -lu`
+	```
+    Device         Start       End   Sectors   Size Type
+    /dev/sda1       2048  99999743  99997696  47.7G Linux filesystem
+    /dev/sda2   99999744 100999167    999424   488M Linux filesystem
+    /dev/sda3  100999168 117000191  16001024   7.6G Linux swap
+    /dev/sda4  117000192 119001087   2000896   977M EFI System
+    /dev/sda5  119001088 500117503 381116416 181.7G Linux filesystem  # End - Start = Sectors
+    ```
+	由`Block(4KB) = 8 * Sectors(0.5KB)`与`b = (int)((L-S)*512/B)`
+    > where:
+    b = File System block number
+    L = LBA(Logical Block Address)
+    S = Starting sector of partition as shown by fdisk -lu and (int) denotes the integer part
+    B = File system block size in bytes
+
+    可知： `L-S = b / (512 / B) = 43769344 / (512 / 4096) = 350154752`。所以， `L = 350154752 + 119001088('注:此值为/dev/sda5 Start位置') = 469155840`，判断这个块号应该是在/dev/sda5里，在Start到End区间内(如果判断不了，使用下一步试一下也能知道)。
+
+2. 使用debugfs获取对应具体文件信息，`sudo debugfs /dev/sda5`
+
     ```
     [sting@sting-snds]
     [:~]$ sudo debugfs /dev/sda5
     [sudo] password for sting:
     debugfs 1.42.13 (17-May-2015)
-    debugfs:  icheck 43769344
+    debugfs:  icheck 43769344  #如果不在这个分区，会提示 <block not found>
     Block	Inode number
     43769344	10485770
     debugfs:  ncheck 10485770
