@@ -14,7 +14,7 @@ PHP内部函数使用`zend_parse_parameters()`<abbr title="Application Programmi
 
 ##### 提案
 
-我们提出了另一个API(fast zpp)以快速解析参数，这应该用于最有用的函数。API基于C语言的宏，可以将优化代码直接内联到内部函数体中。
+我们提出了另一个API(fast zpp)以快速解析参数，它应该被用于最有用的函数里。API是基于C语言的宏，这可以将优化后的代码直接嵌入到内部函数体中。
 
 我们不建议删除现有的API，并建议仅对最常用的函数使用快速API以提高性能。
 
@@ -37,7 +37,7 @@ ZEND_PARSE_PARAMETERS_END();
 
 第一个代码片段只取自`PHP_FUNCTION(array_slice)`，第二个是使用新API替换后的。根据代码实际上可以望文生义。
 
-* `ZEND_PARSE_PARAMETERS_START()`-接受两个参数，最少传入和最多传入参数数量。
+* `ZEND_PARSE_PARAMETERS_START()`-接受两个参数，最少传入和最多传入的参数数量。
 * `Z_PARAM_ARRAY()`-将下一个参数作为数组
 * `Z_PARAM_LONG`-作为长整型参数
 * `Z_PARAM_OPTIONAL`-此项说明剩下的参数是可选的。
@@ -46,7 +46,7 @@ ZEND_PARSE_PARAMETERS_END();
 
 |specifier|Fast ZPP API macro|args|
 |---|---|---|
-|`|`|Z_PARAM_OPTIONAL||
+|&#124;|Z_PARAM_OPTIONAL||
 |a|Z_PARAM_ARRAY(dest)|dest - zval*|
 |A|Z_PARAM_ARRAY_OR_OBJECT(dest)|dest - zval*|
 |b|Z_PARAM_BOOL(dest)|dest - zend_bool|
@@ -69,4 +69,4 @@ ZEND_PARSE_PARAMETERS_END();
 |+|Z_PARAM_VARIADIC('+', dest, num)|dest - zval*, num int|
 |*|Z_PARAM_VARIADIC('*', dest, num)|dest - zval*, num int|
 
-`!`的效果和参考修改器可以使用相同宏的扩展版本来实现，例如`Z_PARAM_ZVAL_EX(dest, check_null, separate)`。
+`!`的效果和关联修饰符可以使用相同宏的扩展版本来实现，例如`Z_PARAM_ZVAL_EX(dest, check_null, separate)`。
