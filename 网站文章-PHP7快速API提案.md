@@ -1,4 +1,4 @@
-__注:__
+*注:*
 
 在查看PHP7源码的时候看到一个`ZEND_PARSE_PARAMETERS_START()`与`ZEND_PARSE_PARAMETERS_END()`代码块，开始不太理解，找到官方RFC才明白。
 
@@ -35,18 +35,18 @@ ZEND_PARSE_PARAMETERS_START(2, 4)
 ZEND_PARSE_PARAMETERS_END();
 ```
 
-第一个代码片段只取自`PHP_FUNCTION(array_slice)`，第二个是使用新API替换它。代码实际上是可自我释义的。
+第一个代码片段只取自`PHP_FUNCTION(array_slice)`，第二个是使用新API替换后的。根据代码实际上可以望文生义。
 
 * `ZEND_PARSE_PARAMETERS_START()`-接受两个参数，最少传入和最多传入参数数量。
 * `Z_PARAM_ARRAY()`-将下一个参数作为数组
 * `Z_PARAM_LONG`-作为长整型参数
-* `Z_PARAM_OPTIONAL`-说明剩下的参数是可选的。
+* `Z_PARAM_OPTIONAL`-此项说明剩下的参数是可选的。
 
-新的API涵盖了现有API的所有可能性。下表显示了旧说明符和新宏之间的对应关系。
+新的API涵盖了现有API的所有可能性。下表列出了旧说明符和新宏之间的对应关系。
 
 |specifier|Fast ZPP API macro|args|
 |---|---|---|
-| |Z_PARAM_OPTIONAL||
+|`|`|Z_PARAM_OPTIONAL||
 |a|Z_PARAM_ARRAY(dest)|dest - zval*|
 |A|Z_PARAM_ARRAY_OR_OBJECT(dest)|dest - zval*|
 |b|Z_PARAM_BOOL(dest)|dest - zend_bool|
@@ -68,3 +68,5 @@ ZEND_PARSE_PARAMETERS_END();
 | |Z_PARAM_ZVAL_DEREF(dest)|dest - zval*|
 |+|Z_PARAM_VARIADIC('+', dest, num)|dest - zval*, num int|
 |*|Z_PARAM_VARIADIC('*', dest, num)|dest - zval*, num int|
+
+`!`的效果和参考修改器可以使用相同宏的扩展版本来实现，例如`Z_PARAM_ZVAL_EX(dest, check_null, separate)`。
