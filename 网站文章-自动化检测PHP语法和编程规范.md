@@ -50,8 +50,8 @@ Usage: php [options] [-f] <file> [--] [args...]
 
 ```
 ********************
-* 安装PHP编程规范工具`php-cs-fixer`，可以在[GitHub](https://github.com/FriendsOfPHP/PHP-CS-Fixer)上查看详细信息.
-    1. 下载:`wget http://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O php-cs-fixer`
+* 安装PHP编程规范工具`php-cs-fixer`，可以在[GitHub](https://github.com/FriendsOfPHP/PHP-CS-Fixer)或[官网](https://cs.symfony.com/)上查看详细信息.
+    1. 下载:`wget https://cs.symfony.com/download/php-cs-fixer-v2.phar -O php-cs-fixer`
     2. 给予执行权限:`sudo chmod a+x php-cs-fixer`
     3. 把文件移动到自己喜欢的目录，我一般是放在`/usr/local/bin`下:`sudo mv php-cs-fixer /usr/local/bin/php-cs-fixer`
 
