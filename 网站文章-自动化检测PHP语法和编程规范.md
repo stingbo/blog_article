@@ -58,7 +58,7 @@ Usage: php [options] [-f] <file> [--] [args...]
 ********************
 * 利用Git的钩子`pre-commit`达成commit前自动检测功能.
 这个钩子，顾名思意就是在`git commit`之前会触发，此钩子结合网上和朋友的写法，感谢他们.
-首先，[点击查看这个文件](http://blog.blianb.com/wp-content/uploads/2017/06/pre-commit.txt)，复制文件内容.
+首先，[点击查看这个文件](./pre-commit)，复制文件内容.
 然后，进入到自己的项目下`git`钩子目录:`cd path/to/your/project/.git/hooks`，复制pre-commit.sample文件并重命名:`cp pre-commit.sample pre-commit`，把文件内容替换为上一步复制的内容.
 最后，每次commit时就会先检测语法和规范是否正确，不正确会提示文件名和你需要规范代码格式的命令，简单测试如下图：.
 ![php-cs-fixer pre-commit](http://blog.blianb.com/wp-content/uploads/2017/06/php-cs-fix_pre-commit.png)
