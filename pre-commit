@@ -1,0 +1,124 @@
+#!/usr/bin/env bash
+
+RETVAL=0
+SYMFONYVAL=0
+
+EXECUTABLE_NAME=php-cs-fixer
+EXECUTABLE_COMMAND=fix
+CONFIG_FILE=.php_cs
+CONFIG_FILE_PARAMETER='@Symfony'
+ROOT=`pwd`
+
+locations=(
+  $ROOT/bin/$EXECUTABLE_NAME
+  $ROOT/vendor/bin/$EXECUTABLE_NAME
+  `which $EXECUTABLE_NAME`
+)
+
+for location in ${locations[*]}
+do
+  if [[ -x $location ]]; then
+    PHP_CS_FIXER=$location
+    break
+  fi
+done
+
+if [[ ! -x $PHP_CS_FIXER ]]; then
+  echo "executable $EXECUTABLE_NAME not found, exiting..."
+  echo "if you're sure this is incorrect, make sure they're executable (chmod +x)"
+  exit
+fi
+
+echo "using \"$EXECUTABLE_NAME\" located at $PHP_CS_FIXER"
+$PHP_CS_FIXER --version
+
+if [ -z $PHP_CS_FIXER_BIN_DIR ];then
+    PHP_CS_FIXER_BIN_DIR=.git/bin
+fi
+
+if [ -z $PHP_CS_FIXER ];then
+    PHP_CS_FIXER=$PHP_CS_FIXER_BIN_DIR/php-cs-fixer
+fi
+
+if [ -z $PHP_SYNTAX_FILE_FILTER ];then
+    PHP_SYNTAX_FILE_FILTER='grep -v do_not_match_any_file'
+fi
+
+if [ -z $PHP_CS_FIXER_FILE_FILTER ];then
+    PHP_CS_FIXER_FILE_FILTER='grep -v vendor'
+fi
+
+function echo_and_space
+{
+    echo -n "    $1"
+    strlen=`echo -n $1 | wc -c`
+    let spacenu=100-strlen 
+    for ((i=1;i<=$spacenu;i++));do echo -n ' ';done
+}
+
+function rollback_install
+{
+    rm -f $PHP_CS_FIXER
+    exit
+}
+
+if [ ! -x "$PHP_CS_FIXER" ]; then 
+    mkdir -p $PHP_CS_FIXER_BIN_DIR
+    echo -e "\n\033[32m 初次执行安装 php-cs-fixer 中（翻墙下载快）.. \033[0m"
+    trap rollback_install SIGINT SIGTERM
+    curl -L http://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -o $PHP_CS_FIXER || exit
+    echo ''
+    chmod +x $PHP_CS_FIXER
+fi 
+
+while read -r file;
+do
+  file=${file:1}
+  FILERET=0
+  if [[ $file = *.php ]];
+  then    
+      echo "Checking File:"
+      echo $file
+      #echo_and_space $file
+      #echo -e "\n";
+
+      if echo $file | $PHP_SYNTAX_FILE_FILTER > /dev/null
+      then
+          if php -l $file > /dev/null 2>&1;
+          then
+              echo -en "Syntax Check: \033[32m true \033[0m\n"
+          else
+              echo -en "Syntax Check: \033[31m false \033[0m;\n"
+              RETVAL=1
+              FILERET=1
+          fi
+      else
+          echo -en "\033[32m skip   \033[0m"
+      fi
+
+      if echo $file | $PHP_CS_FIXER_FILE_FILTER > /dev/null
+      then
+          if [ "$FILERET" -eq "1" ] || $PHP_CS_FIXER fix --rules $CONFIG_FILE_PARAMETER --dry-run $file | grep '1)' > /dev/null 2>&1;
+          then
+              echo -en "PHP Coding Standards Check: \033[31m false \033[0m"
+              RETVAL=1
+              FILERET=1
+              SYMFONYVAL=1
+          else
+              echo -en "PHP Coding Standards Check: \033[32m true \033[0m"
+          fi
+      else
+          echo -en "\033[32m skip \033[0m"
+      fi
+
+      #echo ''
+      echo -e "\n";
+  fi
+done < <(git diff --cached --name-status --diff-filter=ACM)
+
+if [ "$SYMFONYVAL" -eq "1" ];
+then
+    echo -e "\n\033[32m 使用 $PHP_CS_FIXER fix --rules $CONFIG_FILE_PARAMETER --diff [<path>] 来格式化未通过编码规范检查的代码\033[0m"
+fi
+
+exit $RETVAL
